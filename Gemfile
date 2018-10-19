@@ -5,16 +5,19 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-
-gem 'jbuilder',      '~> 2.5'
-gem 'mongoid',       '~> 6.2.0'
-gem 'puma',          '~> 3.7'
-gem 'rails',         '~> 5.1.4'
-gem 'sass-rails',    '~> 5.0'
-gem 'turbolinks',    '~> 5'
-gem 'uglifier',      '>= 1.3.0'
-gem 'responders',    '~> 2.3'
-
+gem 'bootstrap-sass',      '~> 3.3', '>= 3.3.6'
+gem 'font-awesome-rails',  '~> 4.7', '>= 4.7.0.2'
+gem 'jbuilder',            '~> 2.5'
+gem 'jquery-rails',        '~> 4.3', '>= 4.3.1'
+gem 'mongoid',             '~> 6.2.0'
+gem 'puma',                '~> 3.7'
+gem 'rails',               '~> 5.1.4'
+gem 'responders',          '~> 2.3'
+gem 'rest-client',         '~> 2.0.2'
+gem 'sass-rails',          '~> 5.0'
+gem 'sprockets-rails',     '~> 3.2.1', '>= 2.2.4'
+gem 'turbolinks',          '~> 5'
+gem 'uglifier',            '>= 1.3.0'
 
 group :development, :test do
   gem 'byebug',              platforms: [:mri, :mingw, :x64_mingw]

@@ -1,0 +1,184 @@
+<div class="row">
+  <div class="col-md-12">
+    <h2> Source Detail</h2>
+    <hr/>
+  </div>
+</div>
+<div class="row" id="sourceGrid">
+  <div class="col-md-12">
+    <div class="col-md-12">
+      <div class="panel <%= @source[:status] == 'active' ? 'panel-primary' : 'panel-danger' %>">
+        <!-- Panel Header -->
+        <div class="panel-heading">
+          <% app_url = @source[:links].select { |l| l[:type] == "app" }.first[:url] %>
+          <%= link_to(@source[:display_name].humanize.titleize, app_url, style:"font-weight:bold;color:white;") %> | <%= @source[:tagline] %>
+        </div>
+
+        <div class="panel-body">
+          <!-- Description -->
+          <p><%= @source[:description] %><p>
+
+          <!-- Devices -->
+          <div class="row">
+            <div class="col-md-12" align="center">
+              <h4>Supported Devices</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div id="accordion" class="panel-group">
+                <% @source[:devices].each do |device| %>
+                  <div class="panel <%= device[:status] == 'discontinued' ? 'panel-danger' : 'panel-success' %>">
+                    <div class="panel-heading">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapse-<%=device[:name] %>">
+                        <%= device[:name].humanize.titleize %><span class="pull-right"><%= device[:status] %></span>
+                      </a>
+                    </div>
+
+                    <div id="collapse-<%=device[:name] %>" class="panel-collapse collapse">
+                      <div class="panel-body">
+
+                        <div class="row">
+                          <div class="col-md-4">
+                            <img src="<%= device[:image]%>" height="40" width="40">
+                          </div>
+                          <div class="col-md-8">
+                            <%= device[:description] %>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-12">
+                            <table class="table table-striped">
+                              <tr>
+                                <th>Connectivity</th>
+                                <td class="pull-right"><%= device[:connectivity].join(", ") %></td>
+                              </tr>
+                              <tr>
+                                <th>Data Delivery Methods</th>
+                                <td class="pull-right"><%= device[:data_delivery].join(", ") %></td>
+                              </tr>
+                              <tr>
+                                <th>Supported Resources</th>
+                                <td class="pull-right"><%= device[:resources].join(" ") %></td>
+                              </tr>
+                              <tr>
+                                <th>FDA Status</th>
+                                <td class="pull-right"><%= device[:fda_status] %></td>
+                              </tr>
+                              <tr>
+                                <th>Price Range</th>
+                                <td class="pull-right"><%= device[:price] %></td>
+                              </tr>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resources -->
+          <div class="row">
+            <div class="col-md-12" align="center">
+              <h4>How Long to Get Data</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <table class="table table-bordered table-striped">
+                <tr>
+                  <th>Resource</th>
+                  <th>Historical Data</th>
+                  <th>Time to Backfill</th>
+                  <th>Refresh Rate</th>
+                </tr>
+                <% @source[:resources].each do |resource| %>
+                  <tr>
+                    <td><%= resource[:type].humanize.titleize %></td>
+                    <td><%= distance_of_time_in_words(resource.dig(:backfill, :limit)) %></td>
+                    <td><%= distance_of_time_in_words(resource.dig(:backfill, :duration)) %></td>
+                    <td><%= distance_of_time_in_words(resource.dig(:refresh_rate)) %></td>
+                  </tr>
+                <% end %>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <!-- Restrictions -->
+          <div class="row">
+            <div class="col-md-12">
+              <table class="table table-bordered table-striped">
+                <tr>
+                  <th colspan="2">Restrictions</th>
+                </tr>
+                  <tr>
+                    <td>Minimum Age</td>
+                    <td><%= @source.dig(:restrictions, :minimum_age) %></td>
+                  </tr>
+                  <tr>
+                    <td>Can connect multiple users</td>
+                    <td><%= @source.dig(:restrictions, :multi_user) ? 'YES' : 'NO' %></td>
+                  </tr>
+                  <tr>
+                    <td>Prompts user for Timezone</td>
+                    <td><%= @source.dig(:restrictions, :timezone_required) ? 'YES' : 'NO' %></td>
+                  </tr>
+              </table>
+            </div>
+          </div>
+
+          <!-- Categories -->
+          <div class="row">
+            <div class="col-md-12" align="center">
+              <h4>How Validic Maps Data</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <% @source[:resources].each do |resource| %>
+                <h4><%= resource[:type] %></h4>
+                <table class="table table-bordered table-striped">
+                  <tr>
+                    <th>Validic Type</th>
+                    <th>Vendor Types</th>
+                  </tr>
+                  <tr>
+                    <% resource[:categories].each do |category| %>
+                      <tr>
+                      <td><%= category[:validic_type].humanize.titleize %></td>
+                      <td><%= category[:vendor_types].join(', ').humanize.titleize %></td>
+                      </tr>
+                    <% end %>
+                  </tr>
+                </table>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Download -->
+          <hr>
+          <div class="row">
+            <div class="col-md-12" align="center">
+              <h4>Get The App</h4>
+            </div>
+            <div class="col-md-6" align="center">
+              <% android = @source[:platforms].select { |p| p[:type] == 'android' }.first %>
+              <%= link_to(android[:display_name], android[:access_url]) %>
+            </div>
+            <div class="col-md-6" align="center">
+              <% ios = @source[:platforms].select { |p| p[:type] == 'ios' }.first %>
+              <%= link_to(ios[:display_name], ios[:access_url]) %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
